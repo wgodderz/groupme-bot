@@ -1,49 +1,64 @@
 from flask import Flask, request
-from datetime import datetime
-import json, os, requests
+from datetime import datetime, time
+import json, os, requests, logging
+
+# ────────── basic logger setup ──────────
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(message)s",
+)
 
 app = Flask(__name__)
 
-# ─────────────────────────────────────────────────────────────
-# 1)  Receive every POST from GroupMe and log the full payload
-# ─────────────────────────────────────────────────────────────
-@app.route('/', methods=['POST'])
+# ───────────────────────────────────────────────
+# 1) webhook – runs every time GroupMe POSTs here
+# ───────────────────────────────────────────────
+@app.route("/", methods=["POST"])
 def groupme_webhook():
     data = request.get_json(silent=True) or {}
-    print("----- RAW GROUPME PAYLOAD -----")
-    print(json.dumps(data, indent=2))
-    print("----- END RAW PAYLOAD ---------")
+    logging.info("RAW PAYLOAD ↓\n%s", json.dumps(data, indent=2))
 
-    # Ignore our own bot messages
+    # Ignore this bot’s own messages
     if data.get("sender_type") == "bot":
         return "ok", 200
 
-    # Safely pull the fields we care about
-    message = data.get("text")
-    sender  = data.get("name")
-    print(f"[{datetime.now()}] {sender}: {message}")
+    message = data.get("text", "")
+    sender  = data.get("name", "unknown")
+    logging.info("%s: %s", sender, message)
 
-    # ───────── OPTIONAL REPLY EXAMPLE ─────────
-    # If you want the bot to talk back, set GROUPME_BOT_ID
-    # on Render (Environment ► +Add Variable) and uncomment ↓
-    """
-    bot_id = os.getenv("GROUPME_BOT_ID")
-    if bot_id and message:
-        requests.post(
-            "https://api.groupme.com/v3/bots/post",
-            json = {"bot_id": bot_id, "text": f"Echo: {message}"}
-        )
-    """
-    # ──────────────────────────────────────────
+    # ───────── time-based auto-reply ─────────
+    bot_id = os.getenv("GROUPME_BOT_ID")     # set this in Render ➜ Environment
+    if bot_id:
+        now = datetime.now().time()
+        morning  = time(7,  0)   # 07:00
+        noon     = time(12, 0)   # 12:00
+        afternoon= time(17, 0)   # 17:00
+
+        reply = None
+        if morning <= now <= noon:
+            reply = "Will is driving"
+        elif noon < now <= afternoon:
+            reply = "Hank is driving"
+
+        if reply:
+            resp = requests.post(
+                "https://api.groupme.com/v3/bots/post",
+                json={"bot_id": bot_id, "text": reply},
+                timeout=5,
+            )
+            if resp.ok:
+                logging.info("Sent reply: %s", reply)
+            else:
+                logging.warning("GroupMe POST failed: %s", resp.text)
+    # ────────────────────────────────────────
     return "ok", 200
 
 
-# Simple health-check endpoint
-@app.route('/', methods=['GET'])
+# simple GET for health-checks
+@app.route("/", methods=["GET"])
 def home():
     return "GroupMe bot is live!"
 
-
 if __name__ == "__main__":
-    # Render exposes whichever port your code listens on
+    # Render sets $PORT; default to 8080 locally
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", 8080)))

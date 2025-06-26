@@ -1,7 +1,16 @@
 services:
   - type: web
     name: groupme-bot
-    env: python
+    env: python        # tells Render to use the Python runtime
+    plan: free         # keeps you on the free tier
+
+    # If you don’t need to compile anything, leave buildCommand blank:
     buildCommand: ""
+
+    # Gunicorn is recommended in production, but simple python works:
     startCommand: "python main.py"
-    plan: free
+
+    # If main.py listens on a port other than 8080, add:
+    #   envVars:
+    #     - key: PORT
+    #       value: "8080"

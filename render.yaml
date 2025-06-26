@@ -5,7 +5,7 @@ services:
     plan: free         # keeps you on the free tier
 
     # If you don’t need to compile anything, leave buildCommand blank:
-    buildCommand: ""
+    buildCommand: "pip install -r requirements.txt"
 
     # Gunicorn is recommended in production, but simple python works:
     startCommand: "python main.py"

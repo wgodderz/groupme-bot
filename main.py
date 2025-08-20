@@ -106,7 +106,8 @@ def groupme_webhook():
                 logging.info("Sent reply: %s", reply)
             else:
                 logging.warning("GroupMe POST failed: %s", resp.text)
-
+        else:
+            logging.info("No scheduled driver for %s at %s", weekday, now_t.strftime("%H:%M:%S"))
     return "ok", 200
 
 # simple GET for health-checks

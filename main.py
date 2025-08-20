@@ -30,6 +30,8 @@ def groupme_webhook():
     message = data.get("text", "")
     sender  = data.get("name", "unknown")
     logging.info("%s: %s", sender, message)
+    if not message.strip().lower().startswith("/pd"):
+        return "ok", 200
 
     bot_id = os.getenv("GROUPME_BOT_ID")
     if bot_id:

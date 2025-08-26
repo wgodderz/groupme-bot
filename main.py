@@ -44,7 +44,7 @@ def groupme_webhook():
                 (time(8,30),  time(9,30),  "Cooper Kearnes is driving, his number is 913-228-4654"),
                 (time(9,30),  time(10,30), "Talis Sicsis is driving, his number is 913-548-5453"),
                 (time(10,30), time(11,30), "Jackson Harroldis is driving, his number is 913-304-9469"),
-                (time(11,30), time(12,30), "Joel Suh is driving, his number is 913-927-7191"),
+                (time(11,30),  time(12,30),  "Payne Elmore is driving, his number is 913-486-5342"),
                 (time(12,30), time(13,30), "Reid Saugstad is driving, his number is 913-820-0901"),
                 (time(13,30), time(14,30), "Ryan Levine is driving, his number is 918-902-8584"),
                 (time(14,30), time(15,30), "Brady Mandlebaum is driving, his number is 913-291-7442"),
@@ -61,7 +61,7 @@ def groupme_webhook():
                 (time(15,30), time(16,30), "Jaden Dallen is driving, his number is 913-206-9161"),
             ],
             "Wednesday": [
-                (time(8,30),  time(9,30),  "Payne Elmore is driving, his number is 913-486-5342"),
+                (time(8,30), time(9,30), "Joel Suh is driving, his number is 913-927-7191"),
                 (time(9,30),  time(10,30), "Hayden Coors is driving, his number is 720-346-0353"),
                 (time(10,30), time(11,30), "Jackson Harrold is driving, his number is 913-304-9469"),
                 (time(11,30), time(12,30), "Aidan Ultzsch is driving, his number is 316-364-0760"),
@@ -98,18 +98,18 @@ def groupme_webhook():
                 reply = person
                 break
 
-        if reply:
-            resp = requests.post(
-                "https://api.groupme.com/v3/bots/post",
-                json={"bot_id": bot_id, "text": reply},
-                timeout=5,
-            )
-            if resp.ok:
-                logging.info("Sent reply: %s", reply)
-            else:
-                logging.warning("GroupMe POST failed: %s", resp.text)
+        # --- changed section: always send a message ---
+        text = reply or "No one is driving right now"
+        resp = requests.post(
+            "https://api.groupme.com/v3/bots/post",
+            json={"bot_id": bot_id, "text": text},
+            timeout=5,
+        )
+        if resp.ok:
+            logging.info("Sent reply: %s", text)
         else:
-            logging.info("No scheduled driver for %s at %s", weekday, now_t.strftime("%H:%M:%S"))
+            logging.warning("GroupMe POST failed: %s", resp.text)
+
     return "ok", 200
 
 # simple GET for health-checks

@@ -73,7 +73,7 @@ def groupme_webhook(): # group me calls this each time
                 (time(10,30), time(11,30), "Mason Goff, 913-608-1652"),
                 (time(11,30), time(12,30), "Preston Coors, 720-653-0443"),
                 (time(12,30), time(13,30), "Trevor Widener, 913-660-3230"),
-                (time(13,30), time(14,30), "Jeremiah Locke, 913-991-3014"),
+                (time(13,30), time(14,30), "Parker Riffel, 913-674-9779"),
                 (time(14,30), time(15,30), "Owen McNair, 913-444-2944"),
                 (time(15,30), time(16,30), "Oto Sics, 913-237-0406"),
             ],

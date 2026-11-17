@@ -49,9 +49,9 @@ def groupme_webhook(): # group me calls this each time
             ],
             "Tuesday": [
                 (time(8,30),  time(9,30),  "Luke Thelen, 913-315-2080"),
-                (time(9,30),  time(10,30), "Bryson Eiterich, 913-424-3736"),
+                (time(9,30),  time(10,30), "Brady Collette, 402-630-9691"),
                 (time(10,30), time(11,30), "Tommy McDowell, 913-260-3400"),
-                (time(11,30), time(12,30), "Preston Coors, 720-653-0443"),
+                (time(11,30), time(12,30), "Parker Riffel, 913-674-9779"),
                 (time(12,30), time(13,30), "Trevor Widener, 913-660-3230"),
                 (time(13,30), time(14,30), "Brady Flanigan, 210-371-5196"),
                 (time(14,30), time(15,30), "Liam Rhoades, 414-345-0006"),
